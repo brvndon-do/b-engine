@@ -1,8 +1,7 @@
+import { EntityManager, UIManager } from '@engine/managers';
 import { HudComponent } from '../components/HudComponent';
-import { EntityManager } from '../entities/EntityManager';
-import { UIManager } from '../misc/UIManager';
-import { BaseSystem, ScreenContext } from '../types';
-import { calculateAnchorPosition } from '../utils/PositionUtils';
+import { BaseSystem, ScreenContext } from '@engine/types';
+import { calculateAnchorPosition } from '@engine/utils/PositionUtils';
 
 export class HudSystem extends BaseSystem {
   constructor(

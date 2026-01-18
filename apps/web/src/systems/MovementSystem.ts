@@ -1,6 +1,7 @@
-import { InputComponent, TransformComponent } from '../components';
-import { EntityManager } from '../entities/EntityManager';
-import { BaseSystem } from '../types/System';
+import { EntityManager } from '@engine/managers';
+import { TransformComponent } from '@engine/components';
+import { InputComponent } from '../components';
+import { BaseSystem } from '@engine/types';
 import { applyIntent } from '../utils/IntentUtils';
 
 export class MovementSystem extends BaseSystem {

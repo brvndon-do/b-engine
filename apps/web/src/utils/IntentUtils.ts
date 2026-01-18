@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { InputComponent, TransformComponent } from '../components';
+import { InputComponent } from '../components';
+import { TransformComponent } from '@engine/components';
 
 export const applyIntent = (
   transformComponent: TransformComponent,

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { EntityManager } from '../entities/EntityManager';
-import { Scene } from '../types';
+import { EntityManager } from '@engine/managers';
+import { Scene } from '@engine/types';
 import { CubeEntity } from '../entities';
 import { FooHudEntity } from '../entities/hud/FooHudEntity';
 

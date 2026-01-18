@@ -12,6 +12,10 @@
   },
   "license": "ISC",
   "author": "brandon do",
+  "workspaces": [
+    "packages/engine",
+    "apps/web"
+  ],
   "scripts": {
     "dev": "npm --prefix apps/web run dev"
   }

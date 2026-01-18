@@ -1,9 +1,12 @@
 import * as THREE from 'three';
 import { HudComponent } from '../../components/HudComponent';
-import { BaseEntity } from '../../types';
+import { BaseEntity } from '@engine/types';
 
 export class FooHudEntity extends BaseEntity {
-  constructor(public id: string, public text: string) {
+  constructor(
+    public id: string,
+    public text: string
+  ) {
     super(id);
   }
 

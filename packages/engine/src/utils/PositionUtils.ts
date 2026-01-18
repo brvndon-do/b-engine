@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { AnchorOptions } from '../types';
 
-// TODO: think about returning owned b-engine's types instead of three.js
 export const calculateAnchorPosition = (
   anchorPosition: AnchorOptions,
   width: number,

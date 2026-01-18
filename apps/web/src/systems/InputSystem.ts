@@ -1,7 +1,7 @@
+import { EntityManager } from '@engine/managers';
+import { BaseSystem } from '@engine/types';
 import { InputComponent } from '../components';
-import { EntityManager } from '../entities/EntityManager';
-import { InputManager } from '../misc/InputManager';
-import { BaseSystem } from '../types/System';
+import { InputManager } from '@engine/managers';
 
 export class InputSystem extends BaseSystem {
   constructor(

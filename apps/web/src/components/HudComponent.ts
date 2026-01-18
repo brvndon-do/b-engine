@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { AnchorOptions, Component } from '../types';
+import { AnchorOptions, Component } from '@engine/types';
 
 export class HudComponent implements Component {
   public type = 'hud';

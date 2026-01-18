@@ -1,5 +1,6 @@
-import { CameraComponent, TransformComponent } from '../components';
-import { EntityManager } from '../entities/EntityManager';
+import { CameraComponent } from '../components/CameraComponent';
+import { TransformComponent } from '../components/TransformComponent';
+import { EntityManager } from '../managers/EntityManager';
 import { BaseEntity, BaseSystem } from '../types';
 
 import { PointerLockControls } from 'three/examples/jsm/Addons.js';
@@ -15,7 +16,7 @@ export class CameraSystem extends BaseSystem {
     super(0, ['camera', 'transform']);
   }
 
-  init(): void {
+  override init(): void {
     this.cameraEntity = this.entityManager.getEntityById('mainCamera');
 
     if (this.cameraEntity == null) {
@@ -30,7 +31,7 @@ export class CameraSystem extends BaseSystem {
     );
   }
 
-  update(_: number): void {
+  override update(_: number): void {
     const cameraComponent = this.cameraEntity!.getComponent(CameraComponent);
     const transformComponent =
       this.cameraEntity!.getComponent(TransformComponent);

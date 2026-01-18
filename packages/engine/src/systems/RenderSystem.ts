@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import { BaseSystem } from '../types';
-import { EntityManager } from '../entities/EntityManager';
-import { SceneManager } from '../scenes/SceneManager';
-import { CameraComponent, MeshComponent } from '../components';
+import { EntityManager } from '../managers/EntityManager';
+import { SceneManager } from '../managers/SceneManager';
+import { CameraComponent } from '../components/CameraComponent';
+import { MeshComponent } from '../components/MeshComponent';
 
 export class RenderSystem extends BaseSystem {
   private camera!: THREE.Camera;
@@ -21,17 +22,19 @@ export class RenderSystem extends BaseSystem {
       antialias: true,
       canvas: this.canvas,
     });
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
     this.addedObjects = new Set<THREE.Object3D>();
   }
 
-  init(): void {
+  override init(): void {
     const cameraEntity = this.entityManager.getEntityById('mainCamera'); // TODO: this might be a lazy way to do it... find a proper way later
     const cameraComponent = cameraEntity!.getComponent(CameraComponent);
 
     this.camera = cameraComponent!.getCamera();
   }
 
-  update(_: number): void {
+  override update(_: number): void {
     const scene = this.sceneManager.getCurrentScreen()?.threeScene;
 
     if (scene == null) {

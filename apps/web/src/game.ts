@@ -1,8 +1,10 @@
-import { EntityManager } from './entities/EntityManager';
-import { InputManager } from './misc/InputManager';
-import { UIManager } from './misc/UIManager';
-import { SceneManager } from './scenes/SceneManager';
-import { SystemManager } from './systems/SystemManager';
+import {
+  EntityManager,
+  InputManager,
+  SceneManager,
+  SystemManager,
+  UIManager,
+} from '@engine/managers';
 
 type GameConfiguration = {
   canvas: HTMLCanvasElement;

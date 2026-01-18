@@ -1,8 +1,12 @@
 import * as THREE from 'three';
 import { startGame } from './game';
-import { EntityManager } from './entities/EntityManager';
-import { SystemManager } from './systems/SystemManager';
-import { InputManager } from './misc/InputManager';
+import {
+  EntityManager,
+  SystemManager,
+  InputManager,
+  SceneManager,
+  UIManager,
+} from '@engine/managers';
 import { CameraEntity } from './entities';
 import {
   RenderSystem,
@@ -11,12 +15,10 @@ import {
   CameraSystem,
   HudSystem,
 } from './systems';
-import { SceneManager } from './scenes/SceneManager';
-import { TransformSystem } from './systems/TransformSystem';
+import { TransformSystem } from '@engine/systems';
 import { TestScene } from './scenes/TestScene';
 import { FooScene } from './scenes/FooScene';
-import { UIManager } from './misc/UIManager';
-import { ScreenContext } from './types';
+import { ScreenContext } from '@engine/types';
 
 (() => {
   const gameCanvas = document.querySelector(

@@ -1,10 +1,7 @@
 import * as THREE from 'three';
-import {
-  TransformComponent,
-  MeshComponent,
-  InputComponent,
-} from '../components';
-import { BaseEntity } from '../types/Entity';
+import { InputComponent } from '../components';
+import { TransformComponent, MeshComponent } from '@engine/components';
+import { BaseEntity } from '@engine/types';
 
 export class CubeEntity extends BaseEntity {
   constructor(

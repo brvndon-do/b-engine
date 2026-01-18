@@ -1,5 +1,6 @@
-import { MeshComponent, TransformComponent } from '../components';
-import { EntityManager } from '../entities/EntityManager';
+import { MeshComponent } from '../components/MeshComponent';
+import { TransformComponent } from '../components/TransformComponent';
+import { EntityManager } from '../managers/EntityManager';
 import { BaseSystem } from '../types';
 import { isVector3Zero } from '../utils/Vector3Utils';
 
@@ -8,7 +9,7 @@ export class TransformSystem extends BaseSystem {
     super(0, ['transform']);
   }
 
-  update(_: number): void {
+  override update(_: number): void {
     const entities = this.entityManager.getEntitiesWithComponents(
       TransformComponent,
       MeshComponent

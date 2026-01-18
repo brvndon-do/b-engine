@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Component } from '../types/Component';
+import { Component } from '@engine/types/Component';
 
 // TODO: move to different file
 export type Intent = {
