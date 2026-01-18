@@ -3,32 +3,24 @@ import { TransformComponent } from '../components/TransformComponent';
 import { EntityManager } from '../managers/EntityManager';
 import { BaseEntity, BaseSystem } from '../types';
 
-import { PointerLockControls } from 'three/examples/jsm/Addons.js';
-
 export class CameraSystem extends BaseSystem {
-  private cameraEntity: BaseEntity | undefined;
-  private pointerLockControls: PointerLockControls | undefined;
+  protected cameraEntity: BaseEntity | undefined;
 
   constructor(
-    private canvas: HTMLCanvasElement,
+    private cameraEntityId: string,
     private entityManager: EntityManager
   ) {
     super(0, ['camera', 'transform']);
   }
 
   override init(): void {
-    this.cameraEntity = this.entityManager.getEntityById('mainCamera');
+    this.cameraEntity = this.entityManager.getEntityById(this.cameraEntityId);
 
     if (this.cameraEntity == null) {
-      throw new Error('cameraSystem: camera entity is null');
+      throw new Error(
+        `cameraSystem: camera entity "${this.cameraEntityId}" not found`
+      );
     }
-
-    const cameraComponent = this.cameraEntity.getComponent(CameraComponent);
-
-    this.pointerLockControls = new PointerLockControls(
-      cameraComponent!.getCamera(),
-      this.canvas
-    );
   }
 
   override update(_: number): void {
@@ -40,8 +32,6 @@ export class CameraSystem extends BaseSystem {
       console.error('cameraSystem: necessary components were not found');
       return;
     }
-
-    transformComponent.rotation.copy(this.pointerLockControls!.object.rotation);
 
     const camera = cameraComponent.getCamera();
     camera.position.set(

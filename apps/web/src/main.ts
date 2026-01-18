@@ -12,8 +12,8 @@ import {
   RenderSystem,
   InputSystem,
   MovementSystem,
-  CameraSystem,
   HudSystem,
+  PointerLockCameraSystem,
 } from './systems';
 import { TransformSystem } from '@engine/systems';
 import { TestScene } from './scenes/TestScene';
@@ -72,14 +72,18 @@ import { ScreenContext } from '@engine/types';
   );
   const inputSystem = new InputSystem(entityManager, inputManager);
   const movementSystem = new MovementSystem(entityManager);
-  const cameraSystem = new CameraSystem(gameCanvas, entityManager);
+  const pointerLockCameraSystem = new PointerLockCameraSystem(
+    'mainCamera',
+    gameCanvas,
+    entityManager
+  );
   const hudSystem = new HudSystem(entityManager, uiManager, screenContext);
 
   systemManager.addSystem(transformSystem);
   systemManager.addSystem(renderSystem);
   systemManager.addSystem(inputSystem);
   systemManager.addSystem(movementSystem);
-  systemManager.addSystem(cameraSystem);
+  systemManager.addSystem(pointerLockCameraSystem);
   systemManager.addSystem(hudSystem);
 
   startGame({
