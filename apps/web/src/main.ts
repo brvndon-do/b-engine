@@ -66,6 +66,7 @@ import { ScreenContext } from '@engine/types';
   // instantiate systems
   const transformSystem = new TransformSystem(entityManager);
   const renderSystem = new RenderSystem(
+    'mainCamera',
     gameCanvas,
     entityManager,
     sceneManager

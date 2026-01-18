@@ -5,40 +5,71 @@ import { SceneManager } from '../managers/SceneManager';
 import { CameraComponent } from '../components/CameraComponent';
 import { MeshComponent } from '../components/MeshComponent';
 
+// TODO: maybe move to types?
+export interface RenderSystemConfig {
+  antialias?: boolean;
+  alpha?: boolean;
+  width?: number;
+  height?: number;
+  pixelRatio?: number;
+}
+
 export class RenderSystem extends BaseSystem {
   private camera!: THREE.Camera;
   private renderer: THREE.WebGLRenderer;
-
   private addedObjects: Set<THREE.Object3D>;
 
   constructor(
+    private cameraEntityId: string,
     private canvas: HTMLCanvasElement,
     private entityManager: EntityManager,
-    private sceneManager: SceneManager
+    private sceneManager: SceneManager,
+    config: RenderSystemConfig = {}
   ) {
     super(0, ['render']);
 
+    const {
+      antialias = true,
+      alpha = false,
+      width = window.innerWidth,
+      height = window.innerHeight,
+      pixelRatio = window.devicePixelRatio,
+    } = config;
+
     this.renderer = new THREE.WebGLRenderer({
-      antialias: true,
+      antialias,
+      alpha,
       canvas: this.canvas,
     });
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(width, height);
+    this.renderer.setPixelRatio(pixelRatio);
     this.addedObjects = new Set<THREE.Object3D>();
   }
 
   override init(): void {
-    const cameraEntity = this.entityManager.getEntityById('mainCamera'); // TODO: this might be a lazy way to do it... find a proper way later
-    const cameraComponent = cameraEntity!.getComponent(CameraComponent);
+    const cameraEntity = this.entityManager.getEntityById(this.cameraEntityId);
 
-    this.camera = cameraComponent!.getCamera();
+    if (cameraEntity == null) {
+      throw new Error(
+        `renderSystem: camera entity "${this.cameraEntityId}" not found`
+      );
+    }
+
+    const cameraComponent = cameraEntity.getComponent(CameraComponent);
+
+    if (cameraComponent == null) {
+      throw new Error(
+        `renderSystem: camera component not found on entity "${this.cameraEntityId}"`
+      );
+    }
+
+    this.camera = cameraComponent.getCamera();
   }
 
   override update(_: number): void {
     const scene = this.sceneManager.getCurrentScreen()?.threeScene;
 
     if (scene == null) {
-      // TODO: log some sort of message?
       return;
     }
 
@@ -55,5 +86,13 @@ export class RenderSystem extends BaseSystem {
     }
 
     this.renderer.render(scene, this.camera);
+  }
+
+  public getRenderer(): THREE.WebGLRenderer {
+    return this.renderer;
+  }
+
+  public setSize(width: number, height: number): void {
+    this.renderer.setSize(width, height);
   }
 }
