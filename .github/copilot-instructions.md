@@ -1,82 +1,106 @@
 # Copilot Instructions for b-engine
 
-## Project Overview
+## Overview
 
-b-engine is a browser-based game engine built with TypeScript and Vite, using Three.js for 3D rendering. The architecture is Entity-Component-System (ECS), with clear separation between entities, components, systems, and scenes.
+- **b-engine** is a three.js-coupled browser game engine written in TypeScript.
+- The project is organized as a monorepo: `packages/engine` (core three.js ECS engine) and `apps/web` (game implementation).
+- The architecture follows an **Entity-Component-System (ECS)** pattern. Entities are composed of components and processed by systems.
+- The engine is **tightly coupled to three.js** — it is not render-agnostic.
 
-## Architecture & Key Patterns
+## Architecture
 
-- **ECS Structure**:
+### **packages/engine/** — Core THREE.js ECS Engine
 
-  - **Entities**: Extend `BaseEntity` ([src/types/Entity.ts](src/types/Entity.ts)), hold components, and are managed by `EntityManager` ([src/entities/EntityManager.ts](src/entities/EntityManager.ts)).
-  - **Components**: Extend the `Component` interface ([src/types/Component.ts](src/types/Component.ts)), e.g., `TransformComponent`, `MeshComponent`, `InputComponent`, `HudComponent`.
-  - **Systems**: Extend `BaseSystem` ([src/types/System.ts](src/types/System.ts)), operate on entities with specific components. Examples: `RenderSystem`, `MovementSystem`, `InputSystem`, `HudSystem`, `CameraSystem`, `TransformSystem`.
-  - **Scenes**: Implement the `Scene` interface ([src/types/Scene.ts](src/types/Scene.ts)), manage entity setup and per-frame updates.
+The engine owns the fundamental ECS runtime plus three.js integration:
 
-- **Managers**:
+**Core Runtime:**
 
-  - `EntityManager`: Adds/removes entities, queries by component.
-  - `SystemManager`: Registers systems, sorts by priority, calls `update()` each frame.
-  - `SceneManager`: Loads/unloads scenes, calls scene `setup()` and `update()`.
+- `managers/EntityManager.ts` — Entity lifecycle, component management, and queries
+- `managers/SystemManager.ts` — System registration, execution ordering, initialization/disposal
+- `managers/SceneManager.ts` — Scene transitions and lifecycle management
 
-- **Game Loop**:
-  - Entry point: [src/main.ts](src/main.ts) initializes managers, systems, and scenes, then calls `startGame()` ([src/game.ts](src/game.ts)).
-  - The game loop calls `systemManager.update(deltaTime)` and `sceneManager.update(deltaTime)` every frame.
+**Three.js Integration:**
+
+- `types/` — Core interfaces (`Entity`, `Component`, `System`, `Scene`)
+- Generic **three.js-based components**: `TransformComponent` (THREE.Vector3), `MeshComponent` (THREE.Mesh), `CameraComponent` (THREE.Camera)
+- Generic **three.js-based systems**: rendering, camera management, transform synchronization
+- THREE.Renderer and scene graph handling
+
+**Utilities:**
+
+- Generic helpers for entity queries and filtering
+- THREE.js-specific utility functions
+
+### **apps/web/src/** — Game Implementation (Plug & Play)
+
+Game-specific logic and content built on top of the engine:
+
+- `components/` — Game-specific components (extends engine components as needed)
+- `entities/` — Game entity definitions (Player, Enemy, etc.)
+- `systems/` — Game mechanics systems (InputSystem, MovementSystem with game logic)
+- `scenes/` — Game scene definitions and setup
+- `misc/` — Platform/browser integration (InputManager for keyboard wiring, UIManager for HUD)
+- `types/` — Game-specific type definitions
+- `utils/` — Game-specific utility functions
+
+## Patterns & Conventions
+
+- **ECS Pattern:**
+  - Components are plain data holders (minimal logic, focused on data).
+  - Systems operate on entities with specific component sets.
+  - Entities are registered via `EntityManager` and queried by component type.
+- **Engine vs. Game Split:**
+  - **Engine responsibility**: ECS runtime, three.js rendering, generic transform/camera/scene management.
+  - **Game responsibility**: Game mechanics, input handling, entity definitions, scene content, UI logic.
+- **TypeScript:**
+  - Prefer explicit types and interfaces.
+  - Use `index.ts` files for clean module re-exports.
+- **Three.js Coupling:**
+  - Engine components use THREE.Vector3, THREE.Mesh, THREE.Camera directly.
+  - The engine assumes three.js for rendering; it is not render-agnostic.
+  - Game code can extend or compose engine components as needed.
 
 ## Developer Workflows
 
-- **Run Dev Server**: `npm run dev` (uses Vite)
-- **Build**: `npm run build` (TypeScript + Vite)
-- **Preview**: `npm run preview`
-- **No explicit test or lint scripts** (add if needed)
+- **Build:**
+  - Use Vite for local development and builds in `apps/web` (`npm run dev` or `npm run build` in `apps/web`).
+- **Dependencies:**
+  - Install dependencies per package (e.g., `apps/web/package.json` for the web app, `packages/engine/package.json` for the engine).
+- **Debugging:**
+  - Use browser devtools; Vite provides fast HMR.
+- **Testing:**
+  - Add tests in `apps/web` or `packages/engine` as needed.
 
-## Project-Specific Conventions
+## Moving Code Between Layers
 
-- **Component/Entity Registration**: Always add entities via `EntityManager.addEntity()`, which calls their `init()` method to attach components.
-- **System Registration**: Use `SystemManager.addSystem()`; systems are sorted by priority.
-- **Scene Switching**: Use `SceneManager.load(id)` to change scenes; scenes must be registered first.
-- **Input Handling**: Keyboard events are managed by `InputManager` ([src/misc/InputManager.ts](src/misc/InputManager.ts)), and mapped to entity intents via `InputComponent`.
-- **Rendering**: All Three.js objects are managed via `MeshComponent` and added to the scene in `RenderSystem`.
-- **UI/HUD**: Drawn on a separate canvas using `UIManager` ([src/misc/UIManager.ts](src/misc/UIManager.ts)) and `HudSystem`.
+**When to move to engine:**
+
+- Generic three.js systems (rendering, transform syncing, camera management)
+- Core ECS runtime and managers
+- Generic three.js components (Transform, Mesh, Camera)
+- THREE.js utility functions
+
+**When to keep in apps/web:**
+
+- Game-specific components (player state, enemies, game mechanics)
+- Game logic systems (input handling, movement application, game rules)
+- Browser integration (keyboard input wiring, canvas/DOM interaction)
+- Scene and entity definitions specific to the game
+- Game-specific UI/HUD systems
 
 ## Integration Points
 
-- **Three.js**: All 3D objects, cameras, and vectors use Three.js types and APIs.
-- **Vite**: Handles module bundling and dev server.
-- **No external state management or networking yet.**
+- **External:**
+  - [three.js](https://threejs.org/) is the primary external dependency for rendering.
+- **Internal:**
+  - Cross-module communication is via ECS (systems operate on entities/components).
 
-## File/Directory References
+## Examples
 
-- **src/components/**: All component types
-- **src/entities/**: Entity classes and manager
-- **src/systems/**: System classes and manager
-- **src/scenes/**: Scene classes and manager
-- **src/utils/**: Utility functions for ECS and math
-- **src/types/**: Core type definitions
-
-## Example Patterns
-
-- To add a new system:
-  1. Extend `BaseSystem`.
-  2. Register with `SystemManager.addSystem()` in [src/main.ts](src/main.ts).
-- To add a new entity:
-  1. Extend `BaseEntity`.
-  2. Implement `init()` to attach components.
-  3. Add via `EntityManager.addEntity()`.
-- To switch scenes:
-  1. Register with `SceneManager.addScene(id, scene)`.
-  2. Call `SceneManager.load(id)`.
-
-## Style & Formatting
-
-- Uses Prettier ([.prettierrc.json](.prettierrc.json)) for code style.
-- TypeScript strict mode is enabled ([tsconfig.json](tsconfig.json)).
+- To add a new **engine system**: create a generic three.js-based system in `packages/engine/src/systems/`, implement the logic, and export it.
+- To add a **game system**: create a file in `apps/web/src/systems/`, implement the logic, and register it in `SystemManager.ts`.
+- To define a **new component**: decide if it's generic (engine) or game-specific (web app), add a file in the appropriate `components/` directory, and update the component types if needed.
 
 ---
 
-**For AI agents:**
-
-- Follow ECS conventions and use managers for all entity/system/scene operations.
-- Reference and extend existing types and patterns; avoid introducing new architectural styles.
-- Prefer Three.js types for vectors, positions, and rendering.
-- Keep UI logic in HUD/UI systems and avoid mixing with game logic.
+For more details, see the code in `packages/engine/src/` and `apps/web/src/`, and the README.md.
