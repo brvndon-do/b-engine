@@ -21,7 +21,6 @@
     "noUncheckedSideEffectImports": true,
 
     /* Path Aliases */
-    "baseUrl": ".",
     "paths": {
       "@engine/*": ["../../packages/engine/src/*"]
     }
